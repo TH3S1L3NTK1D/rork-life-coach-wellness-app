@@ -40,6 +40,7 @@ export const [AudioProvider, useAudio] = createContextHook(() => {
 
   const playGreeting = async () => {
     if (!audioEnabled) return;
+    if (isPlaying) return; // Prevent multiple plays
     setIsPlaying(true);
     
     try {
@@ -55,7 +56,7 @@ export const [AudioProvider, useAudio] = createContextHook(() => {
     } catch (error) {
       console.error('Error playing greeting:', error);
     } finally {
-      setIsPlaying(false);
+      setTimeout(() => setIsPlaying(false), 1000); // Delay state update to prevent immediate re-render loop
     }
   };
 
