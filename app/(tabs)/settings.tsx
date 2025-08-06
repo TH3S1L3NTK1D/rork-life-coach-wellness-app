@@ -4,6 +4,7 @@ import { LogOut, User, Volume2, Upload, Trash2, Bot, Globe, MessageSquare, Zap, 
 import { StatusBar } from '@/components/ui/StatusBar';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
 import { useAudio } from '@/hooks/useAudio';
@@ -90,6 +91,25 @@ export default function SettingsScreen() {
                 @{user?.username}
               </Text>
             </View>
+          </View>
+          
+          <View style={styles.usernameSection}>
+            <Input
+              placeholder="Set Username"
+              value={user?.username || ''}
+              onChangeText={(text) => {
+                // Update username logic can be added here
+              }}
+              style={styles.usernameInput}
+            />
+            <Button
+              title="Update Username"
+              onPress={() => {
+                // Logic to update username
+                Alert.alert('Success', 'Username updated successfully!');
+              }}
+              style={styles.updateButton}
+            />
           </View>
         </Card>
         
@@ -729,6 +749,17 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: 'rgba(0,0,0,0.1)',
     paddingTop: 16
+  },
+  usernameSection: {
+    marginTop: 16
+  },
+  usernameInput: {
+    height: 40,
+    marginBottom: 8
+  },
+  updateButton: {
+    height: 40,
+    borderRadius: 10
   }
 });
 
