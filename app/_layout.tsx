@@ -1,7 +1,8 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ThemeProvider } from "@/hooks/useTheme";
@@ -25,9 +26,23 @@ function RootLayoutNav() {
 }
 
 export default function RootLayout() {
+  const [showGreeting, setShowGreeting] = useState(true);
+
   useEffect(() => {
     SplashScreen.hideAsync();
+    const timer = setTimeout(() => {
+      setShowGreeting(false);
+    }, 2000);
+    return () => clearTimeout(timer);
   }, []);
+
+  if (showGreeting) {
+    return (
+      <View style={styles.greetingContainer}>
+        <Text style={styles.greetingText}>Welcome to MyApp</Text>
+      </View>
+    );
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -49,3 +64,17 @@ export default function RootLayout() {
     </QueryClientProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  greetingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+  },
+  greetingText: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+});
