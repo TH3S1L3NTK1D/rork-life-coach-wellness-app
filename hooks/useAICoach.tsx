@@ -1,6 +1,15 @@
 import createContextHook from '@nkzw/create-context-hook';
 import { useState, useEffect } from 'react';
-import { AICoach, Reminder, CoreMessage } from '@/types';
+import { AICoach, Reminder } from '@/types';
+
+type ContentPart =
+  | { type: 'text'; text: string }
+  | { type: 'image'; image: string };
+
+type CoreMessage =
+  | { role: 'system'; content: string }
+  | { role: 'user'; content: string | ContentPart[] }
+  | { role: 'assistant'; content: string | ContentPart[] };
 import { defaultAICoach } from '@/constants/mockData';
 import { useAudio } from './useAudio';
 
