@@ -1,13 +1,6 @@
 import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  TouchableOpacity, 
-  ScrollView,
-  Dimensions,
-  Platform
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { ZoomableView } from '@/components/ui/ZoomableView';
 import { router } from 'expo-router';
 import { User, Lock } from 'lucide-react-native';
 import { StatusBar } from '@/components/ui/StatusBar';
@@ -15,8 +8,6 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
-
-const { width: screenWidth } = Dimensions.get('window');
 
 export default function AuthScreen() {
   const { login, register } = useAuth();
@@ -93,15 +84,10 @@ export default function AuthScreen() {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <StatusBar time={currentTime} />
       
-      <ScrollView 
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
         <View style={styles.logoContainer}>
           <View style={[styles.logo, { borderColor: '#d97706' }]}>
-            <Text style={styles.logoText}>LC</Text>
+            <Text style={styles.logoText}>☥</Text>
           </View>
           <Text style={[styles.appName, { color: theme.text }]}>LifeCoach</Text>
           <Text style={[styles.tagline, { color: theme.textSecondary }]}>
@@ -121,7 +107,7 @@ export default function AuthScreen() {
               placeholder="Username"
               value={loginForm.username}
               onChangeText={(text) => setLoginForm({...loginForm, username: text})}
-              leftIcon={<User size={16} color={theme.textSecondary} />}
+              leftIcon={<User size={18} color={theme.textSecondary} />}
               autoCapitalize="none"
               style={styles.inputField}
             />
@@ -130,8 +116,9 @@ export default function AuthScreen() {
               placeholder="Password"
               value={loginForm.password}
               onChangeText={(text) => setLoginForm({...loginForm, password: text})}
-              leftIcon={<Lock size={16} color={theme.textSecondary} />}
+              leftIcon={<Lock size={18} color={theme.textSecondary} />}
               secureTextEntry
+              keyboardType="default"
               onSubmitEditing={handleLogin}
               style={styles.inputField}
             />
@@ -167,7 +154,7 @@ export default function AuthScreen() {
               placeholder="Full Name"
               value={registerForm.name}
               onChangeText={(text) => setRegisterForm({...registerForm, name: text})}
-              leftIcon={<User size={16} color={theme.textSecondary} />}
+              leftIcon={<User size={18} color={theme.textSecondary} />}
               style={styles.inputField}
             />
             
@@ -175,7 +162,7 @@ export default function AuthScreen() {
               placeholder="Username"
               value={registerForm.username}
               onChangeText={(text) => setRegisterForm({...registerForm, username: text})}
-              leftIcon={<User size={16} color={theme.textSecondary} />}
+              leftIcon={<User size={18} color={theme.textSecondary} />}
               autoCapitalize="none"
               style={styles.inputField}
             />
@@ -184,8 +171,9 @@ export default function AuthScreen() {
               placeholder="Password"
               value={registerForm.password}
               onChangeText={(text) => setRegisterForm({...registerForm, password: text})}
-              leftIcon={<Lock size={16} color={theme.textSecondary} />}
+              leftIcon={<Lock size={18} color={theme.textSecondary} />}
               secureTextEntry
+              keyboardType="default"
               style={styles.inputField}
             />
             
@@ -220,102 +208,87 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
-  scrollView: {
-    flex: 1
+  content: {
+    flex: 1,
+    padding: 16,
   },
-  scrollContent: {
+  contentContainer: {
     flexGrow: 1,
     justifyContent: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 40
+    paddingBottom: 50,
   },
   logoContainer: {
     alignItems: 'center',
-    marginBottom: 24
+    marginBottom: 20
   },
   logo: {
-    width: 48,
-    height: 48,
+    width: 60,
+    height: 60,
     backgroundColor: 'black',
     borderWidth: 2,
-    borderRadius: 10,
+    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 4
-      }
-    })
+    marginBottom: 12,
+    elevation: 8
   },
   logoText: {
-    fontSize: 20,
-    color: '#fbbf24',
-    fontWeight: 'bold'
+    fontSize: 32,
+    color: '#fbbf24'
   },
   appName: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 4
   },
   tagline: {
     fontSize: 12,
-    marginBottom: 4,
-    textAlign: 'center'
+    marginBottom: 4
   },
   themeIndicator: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 6
+    marginTop: 8
   },
   themeIndicatorDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    marginRight: 6
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 8
   },
   themeIndicatorText: {
-    fontSize: 12
+    fontSize: 14
   },
   formContainer: {
     width: '100%',
-    maxWidth: Math.min(screenWidth - 40, 320),
-    alignSelf: 'center'
-  },
-  inputField: {
-    height: 40,
-    marginBottom: 10,
-    fontSize: 14
+    alignSelf: 'center',
+    maxWidth: 350,
+    paddingHorizontal: 10,
   },
   button: {
     marginTop: 8,
     height: 40,
-    borderRadius: 8
+    borderRadius: 10
   },
   switchModeButton: {
-    marginTop: 12,
-    alignItems: 'center',
-    padding: 8
+    marginTop: 10,
+    alignItems: 'center'
   },
   switchModeText: {
-    fontSize: 13
+    fontSize: 14
   },
   demoText: {
-    fontSize: 11,
+    fontSize: 12,
     textAlign: 'center',
-    marginTop: 8
+    marginTop: 10
   },
   errorText: {
     color: '#ef4444',
-    marginVertical: 6,
-    textAlign: 'center',
-    fontSize: 12
+    marginTop: 8,
+    textAlign: 'center'
+  },
+  inputField: {
+    height: 40,
+    marginBottom: 6
   }
 });
