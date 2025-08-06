@@ -16,14 +16,14 @@ SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient();
 
-function RootLayoutNav() {
+const RootLayoutNav = React.memo(() => {
   return (
     <Stack screenOptions={{ headerBackTitle: "Back" }}>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="auth" options={{ headerShown: false, presentation: 'modal' }} />
     </Stack>
   );
-}
+});
 
 export default function RootLayout() {
   const [showGreeting, setShowGreeting] = useState(true);
