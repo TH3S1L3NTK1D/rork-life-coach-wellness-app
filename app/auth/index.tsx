@@ -18,10 +18,10 @@ export default function AuthScreen() {
   });
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
+    <View style={[styles.container, { backgroundColor: '#007AFF' }]}>
       <StatusBar time={currentTime} />
       <View style={styles.content}>
-        <Text style={[styles.text, { color: theme.text }]}>Redirecting...</Text>
+        <Text style={[styles.text, { color: '#FFFFFF' }]}>Welcome to Your Life Coach Wellness App</Text>
       </View>
     </View>
   );
@@ -37,6 +37,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   text: {
-    fontSize: 16
+    fontSize: 24,
+    fontWeight: 'bold'
   }
 });
