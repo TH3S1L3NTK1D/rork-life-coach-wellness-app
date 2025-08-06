@@ -85,6 +85,7 @@ export default function AuthScreen() {
       <StatusBar time={currentTime} />
       
       <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
+        <ZoomableView>
         <View style={styles.logoContainer}>
           <View style={[styles.logo, { borderColor: '#d97706' }]}>
             <Text style={styles.logoText}>☥</Text>
@@ -140,7 +141,7 @@ export default function AuthScreen() {
               style={styles.switchModeButton}
             >
               <Text style={[styles.switchModeText, { color: theme.accent }]}>
-                Don't have an account? Create One
+                Don&apos;t have an account? Create One
               </Text>
             </TouchableOpacity>
             
@@ -199,6 +200,7 @@ export default function AuthScreen() {
             </TouchableOpacity>
           </View>
         )}
+        </ZoomableView>
       </ScrollView>
     </View>
   );
@@ -214,9 +216,9 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flexGrow: 1,
-    justifyContent: 'center',
-    paddingBottom: 50,
+    paddingBottom: 200, // Adjusted padding to ensure content is fully scrollable on all devices, especially Android with different screen sizes
   },
+
   logoContainer: {
     alignItems: 'center',
     marginBottom: 20
@@ -230,6 +232,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
     elevation: 8
   },
   logoText: {
