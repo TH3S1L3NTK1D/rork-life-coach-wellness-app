@@ -128,3 +128,7 @@ export const useAICoach = () => {
   }
   return context;
 };
+
+export const GlobalAICoach: React.FC = () => {
+  return null;
+};
