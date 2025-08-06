@@ -21,48 +21,47 @@ export default function TabLayout() {
   }, [isLoading, isLoggedIn]);
   
   // Set up Anuna's navigation and app control functions
+  // Use useCallback to memoize the functions and prevent unnecessary updates
+  const navigate = React.useCallback((route: string) => {
+    const routeMap: { [key: string]: string } = {
+      'dashboard': '/(tabs)/',
+      'habits': '/(tabs)/habits',
+      'meals': '/(tabs)/meals',
+      'supplements': '/(tabs)/supplements',
+      'addictions': '/(tabs)/addictions',
+      'settings': '/(tabs)/settings'
+    };
+    
+    const targetRoute = routeMap[route];
+    if (targetRoute) {
+      router.push(targetRoute as any);
+    }
+  }, []);
+  
+  const executeAppAction = React.useCallback((action: string, params?: any) => {
+    switch (action) {
+      case 'emergency_support':
+        setShowAICoach(true);
+        break;
+      case 'complete_item':
+        // This would need to be implemented based on current screen
+        console.log('Complete item action triggered');
+        break;
+      case 'add_item':
+        // This would need to be implemented based on current screen
+        console.log('Add item action triggered');
+        break;
+      default:
+        console.log('Unknown app action:', action);
+    }
+  }, []);
+  
   useEffect(() => {
     if (isLoggedIn && user) {
-      // Navigation function for Anuna
-      const navigate = (route: string) => {
-        const routeMap: { [key: string]: string } = {
-          'dashboard': '/(tabs)/',
-          'habits': '/(tabs)/habits',
-          'meals': '/(tabs)/meals',
-          'supplements': '/(tabs)/supplements',
-          'addictions': '/(tabs)/addictions',
-          'settings': '/(tabs)/settings'
-        };
-        
-        const targetRoute = routeMap[route];
-        if (targetRoute) {
-          router.push(targetRoute as any);
-        }
-      };
-      
-      // App action function for Anuna
-      const executeAppAction = (action: string, params?: any) => {
-        switch (action) {
-          case 'emergency_support':
-            setShowAICoach(true);
-            break;
-          case 'complete_item':
-            // This would need to be implemented based on current screen
-            console.log('Complete item action triggered');
-            break;
-          case 'add_item':
-            // This would need to be implemented based on current screen
-            console.log('Add item action triggered');
-            break;
-          default:
-            console.log('Unknown app action:', action);
-        }
-      };
-      
       setNavigationFunction(navigate);
       setAppActionFunction(executeAppAction);
     }
-  }, [isLoggedIn, user]);
+  }, [isLoggedIn, user, navigate, executeAppAction, setNavigationFunction, setAppActionFunction]);
   
   // AI coach welcome greeting disabled - Anuna only responds when called with "hey anuna"
 
