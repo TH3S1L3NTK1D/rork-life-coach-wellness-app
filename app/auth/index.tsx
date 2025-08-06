@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { ZoomableView } from '@/components/ui/ZoomableView';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  TouchableOpacity, 
+  ScrollView,
+  Dimensions,
+  Platform
+} from 'react-native';
 import { router } from 'expo-router';
 import { User, Lock } from 'lucide-react-native';
 import { StatusBar } from '@/components/ui/StatusBar';
@@ -8,6 +15,8 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
+
+const { width: screenWidth } = Dimensions.get('window');
 
 export default function AuthScreen() {
   const { login, register } = useAuth();
@@ -84,11 +93,15 @@ export default function AuthScreen() {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <StatusBar time={currentTime} />
       
-      <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
-        <ZoomableView>
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.logoContainer}>
           <View style={[styles.logo, { borderColor: '#d97706' }]}>
-            <Text style={styles.logoText}>☥</Text>
+            <Text style={styles.logoText}>LC</Text>
           </View>
           <Text style={[styles.appName, { color: theme.text }]}>LifeCoach</Text>
           <Text style={[styles.tagline, { color: theme.textSecondary }]}>
@@ -108,7 +121,7 @@ export default function AuthScreen() {
               placeholder="Username"
               value={loginForm.username}
               onChangeText={(text) => setLoginForm({...loginForm, username: text})}
-              leftIcon={<User size={18} color={theme.textSecondary} />}
+              leftIcon={<User size={16} color={theme.textSecondary} />}
               autoCapitalize="none"
               style={styles.inputField}
             />
@@ -117,9 +130,8 @@ export default function AuthScreen() {
               placeholder="Password"
               value={loginForm.password}
               onChangeText={(text) => setLoginForm({...loginForm, password: text})}
-              leftIcon={<Lock size={18} color={theme.textSecondary} />}
+              leftIcon={<Lock size={16} color={theme.textSecondary} />}
               secureTextEntry
-              keyboardType="default"
               onSubmitEditing={handleLogin}
               style={styles.inputField}
             />
@@ -141,7 +153,7 @@ export default function AuthScreen() {
               style={styles.switchModeButton}
             >
               <Text style={[styles.switchModeText, { color: theme.accent }]}>
-                Don&apos;t have an account? Create One
+                Don't have an account? Create One
               </Text>
             </TouchableOpacity>
             
@@ -155,7 +167,7 @@ export default function AuthScreen() {
               placeholder="Full Name"
               value={registerForm.name}
               onChangeText={(text) => setRegisterForm({...registerForm, name: text})}
-              leftIcon={<User size={18} color={theme.textSecondary} />}
+              leftIcon={<User size={16} color={theme.textSecondary} />}
               style={styles.inputField}
             />
             
@@ -163,7 +175,7 @@ export default function AuthScreen() {
               placeholder="Username"
               value={registerForm.username}
               onChangeText={(text) => setRegisterForm({...registerForm, username: text})}
-              leftIcon={<User size={18} color={theme.textSecondary} />}
+              leftIcon={<User size={16} color={theme.textSecondary} />}
               autoCapitalize="none"
               style={styles.inputField}
             />
@@ -172,9 +184,8 @@ export default function AuthScreen() {
               placeholder="Password"
               value={registerForm.password}
               onChangeText={(text) => setRegisterForm({...registerForm, password: text})}
-              leftIcon={<Lock size={18} color={theme.textSecondary} />}
+              leftIcon={<Lock size={16} color={theme.textSecondary} />}
               secureTextEntry
-              keyboardType="default"
               style={styles.inputField}
             />
             
@@ -200,7 +211,6 @@ export default function AuthScreen() {
             </TouchableOpacity>
           </View>
         )}
-        </ZoomableView>
       </ScrollView>
     </View>
   );
@@ -210,91 +220,102 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
-  content: {
-    flex: 1,
-    padding: 16,
+  scrollView: {
+    flex: 1
   },
-  contentContainer: {
+  scrollContent: {
     flexGrow: 1,
-    paddingBottom: 200, // Adjusted padding to ensure content is fully scrollable on all devices, especially Android with different screen sizes
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 40
   },
-
   logoContainer: {
     alignItems: 'center',
-    marginBottom: 20
+    marginBottom: 24
   },
   logo: {
-    width: 60,
-    height: 60,
+    width: 48,
+    height: 48,
     backgroundColor: 'black',
     borderWidth: 2,
-    borderRadius: 12,
+    borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 8
+    marginBottom: 10,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 4
+      }
+    })
   },
   logoText: {
-    fontSize: 32,
-    color: '#fbbf24'
+    fontSize: 20,
+    color: '#fbbf24',
+    fontWeight: 'bold'
   },
   appName: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 4
   },
   tagline: {
     fontSize: 12,
-    marginBottom: 4
+    marginBottom: 4,
+    textAlign: 'center'
   },
   themeIndicator: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 8
+    marginTop: 6
   },
   themeIndicatorDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginRight: 8
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    marginRight: 6
   },
   themeIndicatorText: {
-    fontSize: 14
+    fontSize: 12
   },
   formContainer: {
     width: '100%',
-    alignSelf: 'center',
-    maxWidth: 350,
-    paddingHorizontal: 10,
+    maxWidth: Math.min(screenWidth - 40, 320),
+    alignSelf: 'center'
+  },
+  inputField: {
+    height: 40,
+    marginBottom: 10,
+    fontSize: 14
   },
   button: {
     marginTop: 8,
     height: 40,
-    borderRadius: 10
+    borderRadius: 8
   },
   switchModeButton: {
-    marginTop: 10,
-    alignItems: 'center'
+    marginTop: 12,
+    alignItems: 'center',
+    padding: 8
   },
   switchModeText: {
-    fontSize: 14
+    fontSize: 13
   },
   demoText: {
-    fontSize: 12,
+    fontSize: 11,
     textAlign: 'center',
-    marginTop: 10
+    marginTop: 8
   },
   errorText: {
     color: '#ef4444',
-    marginTop: 8,
-    textAlign: 'center'
-  },
-  inputField: {
-    height: 40,
-    marginBottom: 6
+    marginVertical: 6,
+    textAlign: 'center',
+    fontSize: 12
   }
 });
