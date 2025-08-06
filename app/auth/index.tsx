@@ -1,13 +1,6 @@
 import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  TouchableOpacity, 
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { ZoomableView } from '@/components/ui/ZoomableView';
 import { router } from 'expo-router';
 import { User, Lock } from 'lucide-react-native';
 import { StatusBar } from '@/components/ui/StatusBar';
@@ -88,20 +81,14 @@ export default function AuthScreen() {
   });
 
   return (
-    <KeyboardAvoidingView 
-      style={[styles.container, { backgroundColor: theme.background }]}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       <StatusBar time={currentTime} />
       
-      <ScrollView 
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
+        <ZoomableView>
         <View style={styles.logoContainer}>
           <View style={[styles.logo, { borderColor: '#d97706' }]}>
-            <Text style={styles.logoText}>LC</Text>
+            <Text style={styles.logoText}>☥</Text>
           </View>
           <Text style={[styles.appName, { color: theme.text }]}>LifeCoach</Text>
           <Text style={[styles.tagline, { color: theme.textSecondary }]}>
@@ -154,7 +141,7 @@ export default function AuthScreen() {
               style={styles.switchModeButton}
             >
               <Text style={[styles.switchModeText, { color: theme.accent }]}>
-                Don't have an account? Create One
+                Don&apos;t have an account? Create One
               </Text>
             </TouchableOpacity>
             
@@ -213,8 +200,9 @@ export default function AuthScreen() {
             </TouchableOpacity>
           </View>
         )}
+        </ZoomableView>
       </ScrollView>
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 
@@ -222,15 +210,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
-  scrollContent: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 20
+  content: {
+    flex: 1,
+    padding: 16,
   },
+  contentContainer: {
+    flexGrow: 1,
+    paddingBottom: 200, // Adjusted padding to ensure content is fully scrollable on all devices, especially Android with different screen sizes
+  },
+
   logoContainer: {
     alignItems: 'center',
-    marginBottom: 30
+    marginBottom: 20
   },
   logo: {
     width: 60,
@@ -241,30 +232,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 6,
-      },
-      android: {
-        elevation: 8
-      }
-    })
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8
   },
   logoText: {
     fontSize: 32,
-    color: '#fbbf24',
-    fontWeight: 'bold'
+    color: '#fbbf24'
   },
   appName: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 4
   },
   tagline: {
-    fontSize: 14,
+    fontSize: 12,
     marginBottom: 4
   },
   themeIndicator: {
@@ -283,22 +267,18 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     width: '100%',
+    alignSelf: 'center',
     maxWidth: 350,
-    alignSelf: 'center'
-  },
-  inputField: {
-    height: 45,
-    marginBottom: 12
+    paddingHorizontal: 10,
   },
   button: {
     marginTop: 8,
-    height: 45,
+    height: 40,
     borderRadius: 10
   },
   switchModeButton: {
-    marginTop: 15,
-    alignItems: 'center',
-    padding: 10
+    marginTop: 10,
+    alignItems: 'center'
   },
   switchModeText: {
     fontSize: 14
@@ -310,7 +290,11 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: '#ef4444',
-    marginVertical: 8,
+    marginTop: 8,
     textAlign: 'center'
+  },
+  inputField: {
+    height: 40,
+    marginBottom: 6
   }
 });
