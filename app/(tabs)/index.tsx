@@ -24,18 +24,7 @@ export default function DashboardScreen() {
     return () => clearInterval(timer);
   }, []);
 
-  useEffect(() => {
-    if (user && audioEnabled && !hasPlayedGreeting.current) {
-      hasPlayedGreeting.current = true;
-      const timer = setTimeout(() => playGreeting(user.name), 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [user, audioEnabled]);
 
-  // Reset greeting flag when user changes
-  useEffect(() => {
-    hasPlayedGreeting.current = false;
-  }, [user?.id]);
 
   const formattedTime = currentTime.toLocaleTimeString('en-US', { 
     hour: '2-digit', 
@@ -79,7 +68,7 @@ export default function DashboardScreen() {
                 ? <Pause size={24} color="white" /> 
                 : <Volume2 size={24} color={audioEnabled ? "white" : "rgba(255, 255, 255, 0.5)"} />
               }
-              onPress={isPlaying ? stopSpeech : () => playGreeting(user?.name || '')}
+              onPress={isPlaying ? stopSpeech : () => {}}
               variant="transparent"
               style={[
                 styles.audioButton,
