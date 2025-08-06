@@ -89,6 +89,7 @@ export default function RootLayout() {
       timer = setTimeout(() => {
         if (mounted) {
           setShowGreeting(false);
+          setIsReady(true);
         }
       }, 2000);
     };
@@ -103,13 +104,6 @@ export default function RootLayout() {
       }
     };
   }, [hideSplash]);
-
-  useEffect(() => {
-    // Set isReady to true only after greeting is hidden
-    if (!showGreeting) {
-      setIsReady(true);
-    }
-  }, [showGreeting]);
 
   // Show greeting screen
   if (showGreeting) {
