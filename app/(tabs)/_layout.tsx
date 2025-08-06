@@ -1,7 +1,7 @@
 import { Tabs, router } from "expo-router";
 import { Platform } from "react-native";
 import { Home, Target, UtensilsCrossed, Pill, Settings, ShieldX, Bot } from "lucide-react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { TouchableOpacity, StyleSheet } from "react-native";
 import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/hooks/useTheme";
@@ -22,7 +22,7 @@ export default function TabLayout() {
   
   // Set up Anuna's navigation and app control functions
   // Use useCallback to memoize the functions and prevent unnecessary updates
-  const navigate = React.useCallback((route: string) => {
+  const navigate = useCallback((route: string) => {
     const routeMap: { [key: string]: string } = {
       'dashboard': '/(tabs)/',
       'habits': '/(tabs)/habits',
@@ -38,7 +38,7 @@ export default function TabLayout() {
     }
   }, []);
   
-  const executeAppAction = React.useCallback((action: string, params?: any) => {
+  const executeAppAction = useCallback((action: string, params?: any) => {
     switch (action) {
       case 'emergency_support':
         setShowAICoach(true);
