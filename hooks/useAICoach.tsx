@@ -56,7 +56,8 @@ export const [AICoachProvider, useAICoach] = createContextHook(() => {
     socialMediaAccess: false,
     realTimeData: false
   });
-  const { playGreeting, stopSpeech } = useAudio();
+  // Avoid direct usage of useAudio to prevent potential update loops
+  const audio = useAudio();
   let navigationFn: ((route: string) => void) | null = null;
   let appActionFn: ((action: string, params?: any) => void) | null = null;
 
@@ -138,7 +139,7 @@ export const [AICoachProvider, useAICoach] = createContextHook(() => {
   };
 
   const playWelcomeGreeting = async () => {
-    await playGreeting();
+    await audio.playGreeting();
   };
 
   const resetGreetingFlag = () => {
@@ -146,7 +147,7 @@ export const [AICoachProvider, useAICoach] = createContextHook(() => {
   };
 
   const stopTTS = () => {
-    stopSpeech();
+    audio.stopSpeech();
   };
 
   const addReminder = async (reminder: Omit<Reminder, 'id'>) => {
