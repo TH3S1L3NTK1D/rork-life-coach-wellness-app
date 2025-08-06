@@ -18,7 +18,7 @@ export default function TabLayout() {
     if (!isLoading && !isLoggedIn) {
       router.replace('/auth');
     }
-  }, [isLoggedIn, isLoading]);
+  }, [isLoading, isLoggedIn]);
   
   // Set up Anuna's navigation and app control functions
   useEffect(() => {
@@ -62,7 +62,7 @@ export default function TabLayout() {
       setNavigationFunction(navigate);
       setAppActionFunction(executeAppAction);
     }
-  }, [isLoggedIn, user, setNavigationFunction, setAppActionFunction]);
+  }, [isLoggedIn, user]);
   
   // AI coach welcome greeting disabled - Anuna only responds when called with "hey anuna"
 
