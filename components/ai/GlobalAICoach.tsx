@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useEffect, useCallback } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, BackHandler } from 'react-native';
 
 interface GlobalAICoachProps {
   visible: boolean;
@@ -7,38 +7,77 @@ interface GlobalAICoachProps {
 }
 
 export const GlobalAICoach: React.FC<GlobalAICoachProps> = ({ visible, onClose }) => {
-  if (!visible) return null;
-  
+  // Handle Android back button
+  useEffect(() => {
+    if (!visible) return;
+    
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (visible) {
+        onClose();
+        return true;
+      }
+      return false;
+    });
+
+    return () => backHandler.remove();
+  }, [visible, onClose]);
+
+  // Memoize the close handler to prevent recreation
+  const handleClose = useCallback(() => {
+    if (onClose && typeof onClose === 'function') {
+      onClose();
+    }
+  }, [onClose]);
+
+  // Use Modal component for better handling
   return (
-    <View style={styles.modalContainer}>
-      <View style={styles.modalContent}>
-        <Text style={styles.title}>AI Coach</Text>
-        <Text style={styles.message}>How can I help you today?</Text>
+    <Modal
+      animationType="fade"
+      transparent={true}
+      visible={visible}
+      onRequestClose={handleClose}
+    >
+      <View style={styles.modalContainer}>
         <TouchableOpacity 
-          style={styles.closeButton} 
-          onPress={onClose}
+          style={styles.backdrop} 
+          activeOpacity={1} 
+          onPress={handleClose}
         >
-          <Text style={styles.closeButtonText}>Close</Text>
+          <View style={styles.modalContent} onStartShouldSetResponder={() => true}>
+            <Text style={styles.title}>AI Coach</Text>
+            <Text style={styles.message}>How can I help you today?</Text>
+            <TouchableOpacity 
+              style={styles.closeButton} 
+              onPress={handleClose}
+            >
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
         </TouchableOpacity>
       </View>
-    </View>
+    </Modal>
   );
 };
 
 const styles = StyleSheet.create({
   modalContainer: {
-    ...StyleSheet.absoluteFillObject,
+    flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 1000,
+  },
+  backdrop: {
+    flex: 1,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   modalContent: {
     backgroundColor: 'white',
     borderRadius: 16,
     padding: 20,
     width: '90%',
-    maxHeight: '50%',
+    maxWidth: 350,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -50,11 +89,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 15,
     textAlign: 'center',
+    color: '#000',
   },
   message: {
     fontSize: 16,
     textAlign: 'center',
     marginBottom: 30,
+    color: '#333',
   },
   closeButton: {
     alignSelf: 'center',
@@ -69,3 +110,35 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 });
+
+// Parent Component Example - IMPORTANT: This shows how to use it correctly
+/*
+import React, { useState, useCallback } from 'react';
+import { GlobalAICoach } from './GlobalAICoach';
+
+export const ParentComponent = () => {
+  const [showAICoach, setShowAICoach] = useState(false);
+
+  // IMPORTANT: Use useCallback to prevent function recreation
+  const handleOpenAICoach = useCallback(() => {
+    setShowAICoach(true);
+  }, []);
+
+  const handleCloseAICoach = useCallback(() => {
+    setShowAICoach(false);
+  }, []);
+
+  return (
+    <View>
+      <TouchableOpacity onPress={handleOpenAICoach}>
+        <Text>Open AI Coach</Text>
+      </TouchableOpacity>
+      
+      <GlobalAICoach 
+        visible={showAICoach} 
+        onClose={handleCloseAICoach}
+      />
+    </View>
+  );
+};
+*/
