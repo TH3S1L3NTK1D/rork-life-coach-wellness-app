@@ -4,14 +4,10 @@ import {
   Text, 
   StyleSheet, 
   TouchableOpacity, 
-  ScrollView,
   KeyboardAvoidingView,
   Platform,
-  Dimensions,
-  StatusBar as RNStatusBar
+  ScrollView
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { ZoomableView } from '@/components/ui/ZoomableView';
 import { router } from 'expo-router';
 import { User, Lock } from 'lucide-react-native';
 import { StatusBar } from '@/components/ui/StatusBar';
@@ -19,8 +15,6 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
-
-const { height: windowHeight } = Dimensions.get('window');
 
 export default function AuthScreen() {
   const { login, register } = useAuth();
@@ -94,142 +88,133 @@ export default function AuthScreen() {
   });
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+    <KeyboardAvoidingView 
+      style={[styles.container, { backgroundColor: theme.background }]}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
       <StatusBar time={currentTime} />
       
-      <KeyboardAvoidingView 
-        style={styles.keyboardAvoidingContainer}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
-        <ScrollView 
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-          bounces={false}
-        >
-          <ZoomableView>
-            <View style={styles.innerContent}>
-              <View style={styles.logoContainer}>
-                <View style={[styles.logo, { borderColor: '#d97706' }]}>
-                  <Text style={styles.logoText}>LC</Text>
-                </View>
-                <Text style={[styles.appName, { color: theme.text }]}>LifeCoach</Text>
-                <Text style={[styles.tagline, { color: theme.textSecondary }]}>
-                  Your Personal Wellness Journey
-                </Text>
-                <View style={styles.themeIndicator}>
-                  <View style={[styles.themeIndicatorDot, { backgroundColor: theme.accent }]} />
-                  <Text style={[styles.themeIndicatorText, { color: theme.accent }]}>
-                    {theme.name}
-                  </Text>
-                </View>
-              </View>
+        <View style={styles.logoContainer}>
+          <View style={[styles.logo, { borderColor: '#d97706' }]}>
+            <Text style={styles.logoText}>LC</Text>
+          </View>
+          <Text style={[styles.appName, { color: theme.text }]}>LifeCoach</Text>
+          <Text style={[styles.tagline, { color: theme.textSecondary }]}>
+            Your Personal Wellness Journey
+          </Text>
+          <View style={styles.themeIndicator}>
+            <View style={[styles.themeIndicatorDot, { backgroundColor: theme.accent }]} />
+            <Text style={[styles.themeIndicatorText, { color: theme.accent }]}>
+              {theme.name}
+            </Text>
+          </View>
+        </View>
 
-              {!isRegistering ? (
-                <View style={styles.formContainer}>
-                  <Input
-                    placeholder="Username"
-                    value={loginForm.username}
-                    onChangeText={(text) => setLoginForm({...loginForm, username: text})}
-                    leftIcon={<User size={18} color={theme.textSecondary} />}
-                    autoCapitalize="none"
-                    style={styles.inputField}
-                  />
-                  
-                  <Input
-                    placeholder="Password"
-                    value={loginForm.password}
-                    onChangeText={(text) => setLoginForm({...loginForm, password: text})}
-                    leftIcon={<Lock size={18} color={theme.textSecondary} />}
-                    secureTextEntry
-                    keyboardType="default"
-                    onSubmitEditing={handleLogin}
-                    style={styles.inputField}
-                  />
-                  
-                  {error ? <Text style={styles.errorText}>{error}</Text> : null}
-                  
-                  <Button
-                    title="Sign In"
-                    onPress={handleLogin}
-                    loading={loading}
-                    style={styles.button}
-                  />
-                  
-                  <TouchableOpacity
-                    onPress={() => {
-                      setIsRegistering(true);
-                      setError('');
-                    }}
-                    style={styles.switchModeButton}
-                  >
-                    <Text style={[styles.switchModeText, { color: theme.accent }]}>
-                      Don't have an account? Create One
-                    </Text>
-                  </TouchableOpacity>
-                  
-                  <Text style={[styles.demoText, { color: theme.textSecondary }]}>
-                    Demo: victoria_doe / password123
-                  </Text>
-                </View>
-              ) : (
-                <View style={styles.formContainer}>
-                  <Input
-                    placeholder="Full Name"
-                    value={registerForm.name}
-                    onChangeText={(text) => setRegisterForm({...registerForm, name: text})}
-                    leftIcon={<User size={18} color={theme.textSecondary} />}
-                    style={styles.inputField}
-                  />
-                  
-                  <Input
-                    placeholder="Username"
-                    value={registerForm.username}
-                    onChangeText={(text) => setRegisterForm({...registerForm, username: text})}
-                    leftIcon={<User size={18} color={theme.textSecondary} />}
-                    autoCapitalize="none"
-                    style={styles.inputField}
-                  />
-                  
-                  <Input
-                    placeholder="Password"
-                    value={registerForm.password}
-                    onChangeText={(text) => setRegisterForm({...registerForm, password: text})}
-                    leftIcon={<Lock size={18} color={theme.textSecondary} />}
-                    secureTextEntry
-                    keyboardType="default"
-                    style={styles.inputField}
-                  />
-                  
-                  {error ? <Text style={styles.errorText}>{error}</Text> : null}
-                  
-                  <Button
-                    title="Create Account"
-                    onPress={handleRegister}
-                    loading={loading}
-                    style={styles.button}
-                  />
-                  
-                  <TouchableOpacity
-                    onPress={() => {
-                      setIsRegistering(false);
-                      setError('');
-                    }}
-                    style={styles.switchModeButton}
-                  >
-                    <Text style={[styles.switchModeText, { color: theme.accent }]}>
-                      Already have an account? Sign In
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              )}
-            </View>
-          </ZoomableView>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+        {!isRegistering ? (
+          <View style={styles.formContainer}>
+            <Input
+              placeholder="Username"
+              value={loginForm.username}
+              onChangeText={(text) => setLoginForm({...loginForm, username: text})}
+              leftIcon={<User size={18} color={theme.textSecondary} />}
+              autoCapitalize="none"
+              style={styles.inputField}
+            />
+            
+            <Input
+              placeholder="Password"
+              value={loginForm.password}
+              onChangeText={(text) => setLoginForm({...loginForm, password: text})}
+              leftIcon={<Lock size={18} color={theme.textSecondary} />}
+              secureTextEntry
+              keyboardType="default"
+              onSubmitEditing={handleLogin}
+              style={styles.inputField}
+            />
+            
+            {error ? <Text style={styles.errorText}>{error}</Text> : null}
+            
+            <Button
+              title="Sign In"
+              onPress={handleLogin}
+              loading={loading}
+              style={styles.button}
+            />
+            
+            <TouchableOpacity
+              onPress={() => {
+                setIsRegistering(true);
+                setError('');
+              }}
+              style={styles.switchModeButton}
+            >
+              <Text style={[styles.switchModeText, { color: theme.accent }]}>
+                Don't have an account? Create One
+              </Text>
+            </TouchableOpacity>
+            
+            <Text style={[styles.demoText, { color: theme.textSecondary }]}>
+              Demo: victoria_doe / password123
+            </Text>
+          </View>
+        ) : (
+          <View style={styles.formContainer}>
+            <Input
+              placeholder="Full Name"
+              value={registerForm.name}
+              onChangeText={(text) => setRegisterForm({...registerForm, name: text})}
+              leftIcon={<User size={18} color={theme.textSecondary} />}
+              style={styles.inputField}
+            />
+            
+            <Input
+              placeholder="Username"
+              value={registerForm.username}
+              onChangeText={(text) => setRegisterForm({...registerForm, username: text})}
+              leftIcon={<User size={18} color={theme.textSecondary} />}
+              autoCapitalize="none"
+              style={styles.inputField}
+            />
+            
+            <Input
+              placeholder="Password"
+              value={registerForm.password}
+              onChangeText={(text) => setRegisterForm({...registerForm, password: text})}
+              leftIcon={<Lock size={18} color={theme.textSecondary} />}
+              secureTextEntry
+              keyboardType="default"
+              style={styles.inputField}
+            />
+            
+            {error ? <Text style={styles.errorText}>{error}</Text> : null}
+            
+            <Button
+              title="Create Account"
+              onPress={handleRegister}
+              loading={loading}
+              style={styles.button}
+            />
+            
+            <TouchableOpacity
+              onPress={() => {
+                setIsRegistering(false);
+                setError('');
+              }}
+              style={styles.switchModeButton}
+            >
+              <Text style={[styles.switchModeText, { color: theme.accent }]}>
+                Already have an account? Sign In
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -237,28 +222,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
-  keyboardAvoidingContainer: {
-    flex: 1
-  },
-  scrollView: {
-    flex: 1
-  },
   scrollContent: {
     flexGrow: 1,
-    // Adjust padding based on screen size and platform
-    paddingBottom: Platform.OS === 'android' ? 40 : 20,
-    paddingHorizontal: 16,
-    minHeight: windowHeight < 600 ? windowHeight : undefined
-  },
-  innerContent: {
-    flex: 1,
-    justifyContent: windowHeight < 600 ? 'flex-start' : 'center',
-    paddingTop: windowHeight < 600 ? 20 : 40,
-    paddingBottom: 20
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 20
   },
   logoContainer: {
     alignItems: 'center',
-    marginBottom: windowHeight < 600 ? 15 : 30
+    marginBottom: 30
   },
   logo: {
     width: 60,
@@ -269,7 +241,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
-    // Platform-specific shadow
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -283,9 +254,9 @@ const styles = StyleSheet.create({
     })
   },
   logoText: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#fbbf24'
+    fontSize: 32,
+    color: '#fbbf24',
+    fontWeight: 'bold'
   },
   appName: {
     fontSize: 24,
@@ -294,8 +265,7 @@ const styles = StyleSheet.create({
   },
   tagline: {
     fontSize: 14,
-    marginBottom: 4,
-    textAlign: 'center'
+    marginBottom: 4
   },
   themeIndicator: {
     flexDirection: 'row',
@@ -313,24 +283,22 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     width: '100%',
-    alignSelf: 'center',
     maxWidth: 350,
-    paddingHorizontal: Platform.OS === 'android' ? 5 : 10,
-    marginTop: windowHeight < 600 ? 10 : 20
+    alignSelf: 'center'
   },
   inputField: {
     height: 45,
     marginBottom: 12
   },
   button: {
-    marginTop: 12,
+    marginTop: 8,
     height: 45,
     borderRadius: 10
   },
   switchModeButton: {
-    marginTop: 16,
+    marginTop: 15,
     alignItems: 'center',
-    paddingVertical: 8
+    padding: 10
   },
   switchModeText: {
     fontSize: 14
@@ -338,14 +306,11 @@ const styles = StyleSheet.create({
   demoText: {
     fontSize: 12,
     textAlign: 'center',
-    marginTop: 12,
-    paddingBottom: Platform.OS === 'android' ? 20 : 10
+    marginTop: 10
   },
   errorText: {
     color: '#ef4444',
-    marginTop: 8,
-    marginBottom: 8,
-    textAlign: 'center',
-    fontSize: 14
+    marginVertical: 8,
+    textAlign: 'center'
   }
 });
