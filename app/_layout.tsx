@@ -39,7 +39,7 @@ export default function RootLayout() {
   if (showGreeting) {
     return (
       <View style={styles.greetingContainer}>
-        <Text style={styles.greetingText}>Welcome to MyApp</Text>
+        <Text style={styles.greetingText}>Welcome to Your Life Coach Wellness App</Text>
       </View>
     );
   }
@@ -70,11 +70,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#007AFF',
   },
   greetingText: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#FFFFFF',
   },
 });

@@ -82,6 +82,15 @@ export interface Reminder {
   lastTriggered?: string;
 }
 
+export type ContentPart =
+  | { type: 'text'; text: string }
+  | { type: 'image'; image: string };
+
+export type CoreMessage =
+  | { role: 'system'; content: string }
+  | { role: 'user'; content: string | ContentPart[] }
+  | { role: 'assistant'; content: string | ContentPart[] };
+
 export interface ThemeColors {
   name: string;
   primary: string;
