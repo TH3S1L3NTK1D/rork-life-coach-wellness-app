@@ -89,8 +89,7 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <View style={styles.greetingContainer}>
           <Text style={styles.greetingText}>
-            Welcome to Your{'
-'}Life Coach Wellness App
+            Welcome to Your Life Coach Wellness App
           </Text>
         </View>
       </SafeAreaProvider>
