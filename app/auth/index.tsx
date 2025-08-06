@@ -1,5 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  TouchableOpacity, 
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  Dimensions,
+  StatusBar as RNStatusBar
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { ZoomableView } from '@/components/ui/ZoomableView';
 import { router } from 'expo-router';
 import { User, Lock } from 'lucide-react-native';
@@ -8,6 +19,8 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
+
+const { height: windowHeight } = Dimensions.get('window');
 
 export default function AuthScreen() {
   const { login, register } = useAuth();
@@ -81,128 +94,142 @@ export default function AuthScreen() {
   });
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
       <StatusBar time={currentTime} />
       
-      <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
-        <ZoomableView>
-        <View style={styles.logoContainer}>
-          <View style={[styles.logo, { borderColor: '#d97706' }]}>
-            <Text style={styles.logoText}>☥</Text>
-          </View>
-          <Text style={[styles.appName, { color: theme.text }]}>LifeCoach</Text>
-          <Text style={[styles.tagline, { color: theme.textSecondary }]}>
-            Your Personal Wellness Journey
-          </Text>
-          <View style={styles.themeIndicator}>
-            <View style={[styles.themeIndicatorDot, { backgroundColor: theme.accent }]} />
-            <Text style={[styles.themeIndicatorText, { color: theme.accent }]}>
-              {theme.name}
-            </Text>
-          </View>
-        </View>
+      <KeyboardAvoidingView 
+        style={styles.keyboardAvoidingContainer}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+      >
+        <ScrollView 
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          bounces={false}
+        >
+          <ZoomableView>
+            <View style={styles.innerContent}>
+              <View style={styles.logoContainer}>
+                <View style={[styles.logo, { borderColor: '#d97706' }]}>
+                  <Text style={styles.logoText}>LC</Text>
+                </View>
+                <Text style={[styles.appName, { color: theme.text }]}>LifeCoach</Text>
+                <Text style={[styles.tagline, { color: theme.textSecondary }]}>
+                  Your Personal Wellness Journey
+                </Text>
+                <View style={styles.themeIndicator}>
+                  <View style={[styles.themeIndicatorDot, { backgroundColor: theme.accent }]} />
+                  <Text style={[styles.themeIndicatorText, { color: theme.accent }]}>
+                    {theme.name}
+                  </Text>
+                </View>
+              </View>
 
-        {!isRegistering ? (
-          <View style={styles.formContainer}>
-            <Input
-              placeholder="Username"
-              value={loginForm.username}
-              onChangeText={(text) => setLoginForm({...loginForm, username: text})}
-              leftIcon={<User size={18} color={theme.textSecondary} />}
-              autoCapitalize="none"
-              style={styles.inputField}
-            />
-            
-            <Input
-              placeholder="Password"
-              value={loginForm.password}
-              onChangeText={(text) => setLoginForm({...loginForm, password: text})}
-              leftIcon={<Lock size={18} color={theme.textSecondary} />}
-              secureTextEntry
-              keyboardType="default"
-              onSubmitEditing={handleLogin}
-              style={styles.inputField}
-            />
-            
-            {error ? <Text style={styles.errorText}>{error}</Text> : null}
-            
-            <Button
-              title="Sign In"
-              onPress={handleLogin}
-              loading={loading}
-              style={styles.button}
-            />
-            
-            <TouchableOpacity
-              onPress={() => {
-                setIsRegistering(true);
-                setError('');
-              }}
-              style={styles.switchModeButton}
-            >
-              <Text style={[styles.switchModeText, { color: theme.accent }]}>
-                Don&apos;t have an account? Create One
-              </Text>
-            </TouchableOpacity>
-            
-            <Text style={[styles.demoText, { color: theme.textSecondary }]}>
-              Demo: victoria_doe / password123
-            </Text>
-          </View>
-        ) : (
-          <View style={styles.formContainer}>
-            <Input
-              placeholder="Full Name"
-              value={registerForm.name}
-              onChangeText={(text) => setRegisterForm({...registerForm, name: text})}
-              leftIcon={<User size={18} color={theme.textSecondary} />}
-              style={styles.inputField}
-            />
-            
-            <Input
-              placeholder="Username"
-              value={registerForm.username}
-              onChangeText={(text) => setRegisterForm({...registerForm, username: text})}
-              leftIcon={<User size={18} color={theme.textSecondary} />}
-              autoCapitalize="none"
-              style={styles.inputField}
-            />
-            
-            <Input
-              placeholder="Password"
-              value={registerForm.password}
-              onChangeText={(text) => setRegisterForm({...registerForm, password: text})}
-              leftIcon={<Lock size={18} color={theme.textSecondary} />}
-              secureTextEntry
-              keyboardType="default"
-              style={styles.inputField}
-            />
-            
-            {error ? <Text style={styles.errorText}>{error}</Text> : null}
-            
-            <Button
-              title="Create Account"
-              onPress={handleRegister}
-              loading={loading}
-              style={styles.button}
-            />
-            
-            <TouchableOpacity
-              onPress={() => {
-                setIsRegistering(false);
-                setError('');
-              }}
-              style={styles.switchModeButton}
-            >
-              <Text style={[styles.switchModeText, { color: theme.accent }]}>
-                Already have an account? Sign In
-              </Text>
-            </TouchableOpacity>
-          </View>
-        )}
-        </ZoomableView>
-      </ScrollView>
-    </View>
+              {!isRegistering ? (
+                <View style={styles.formContainer}>
+                  <Input
+                    placeholder="Username"
+                    value={loginForm.username}
+                    onChangeText={(text) => setLoginForm({...loginForm, username: text})}
+                    leftIcon={<User size={18} color={theme.textSecondary} />}
+                    autoCapitalize="none"
+                    style={styles.inputField}
+                  />
+                  
+                  <Input
+                    placeholder="Password"
+                    value={loginForm.password}
+                    onChangeText={(text) => setLoginForm({...loginForm, password: text})}
+                    leftIcon={<Lock size={18} color={theme.textSecondary} />}
+                    secureTextEntry
+                    keyboardType="default"
+                    onSubmitEditing={handleLogin}
+                    style={styles.inputField}
+                  />
+                  
+                  {error ? <Text style={styles.errorText}>{error}</Text> : null}
+                  
+                  <Button
+                    title="Sign In"
+                    onPress={handleLogin}
+                    loading={loading}
+                    style={styles.button}
+                  />
+                  
+                  <TouchableOpacity
+                    onPress={() => {
+                      setIsRegistering(true);
+                      setError('');
+                    }}
+                    style={styles.switchModeButton}
+                  >
+                    <Text style={[styles.switchModeText, { color: theme.accent }]}>
+                      Don't have an account? Create One
+                    </Text>
+                  </TouchableOpacity>
+                  
+                  <Text style={[styles.demoText, { color: theme.textSecondary }]}>
+                    Demo: victoria_doe / password123
+                  </Text>
+                </View>
+              ) : (
+                <View style={styles.formContainer}>
+                  <Input
+                    placeholder="Full Name"
+                    value={registerForm.name}
+                    onChangeText={(text) => setRegisterForm({...registerForm, name: text})}
+                    leftIcon={<User size={18} color={theme.textSecondary} />}
+                    style={styles.inputField}
+                  />
+                  
+                  <Input
+                    placeholder="Username"
+                    value={registerForm.username}
+                    onChangeText={(text) => setRegisterForm({...registerForm, username: text})}
+                    leftIcon={<User size={18} color={theme.textSecondary} />}
+                    autoCapitalize="none"
+                    style={styles.inputField}
+                  />
+                  
+                  <Input
+                    placeholder="Password"
+                    value={registerForm.password}
+                    onChangeText={(text) => setRegisterForm({...registerForm, password: text})}
+                    leftIcon={<Lock size={18} color={theme.textSecondary} />}
+                    secureTextEntry
+                    keyboardType="default"
+                    style={styles.inputField}
+                  />
+                  
+                  {error ? <Text style={styles.errorText}>{error}</Text> : null}
+                  
+                  <Button
+                    title="Create Account"
+                    onPress={handleRegister}
+                    loading={loading}
+                    style={styles.button}
+                  />
+                  
+                  <TouchableOpacity
+                    onPress={() => {
+                      setIsRegistering(false);
+                      setError('');
+                    }}
+                    style={styles.switchModeButton}
+                  >
+                    <Text style={[styles.switchModeText, { color: theme.accent }]}>
+                      Already have an account? Sign In
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
+          </ZoomableView>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
@@ -210,18 +237,28 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
-  content: {
-    flex: 1,
-    padding: 16,
+  keyboardAvoidingContainer: {
+    flex: 1
   },
-  contentContainer: {
+  scrollView: {
+    flex: 1
+  },
+  scrollContent: {
     flexGrow: 1,
-    paddingBottom: 200, // Adjusted padding to ensure content is fully scrollable on all devices, especially Android with different screen sizes
+    // Adjust padding based on screen size and platform
+    paddingBottom: Platform.OS === 'android' ? 40 : 20,
+    paddingHorizontal: 16,
+    minHeight: windowHeight < 600 ? windowHeight : undefined
   },
-
+  innerContent: {
+    flex: 1,
+    justifyContent: windowHeight < 600 ? 'flex-start' : 'center',
+    paddingTop: windowHeight < 600 ? 20 : 40,
+    paddingBottom: 20
+  },
   logoContainer: {
     alignItems: 'center',
-    marginBottom: 20
+    marginBottom: windowHeight < 600 ? 15 : 30
   },
   logo: {
     width: 60,
@@ -232,24 +269,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 8
+    // Platform-specific shadow
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 6,
+      },
+      android: {
+        elevation: 8
+      }
+    })
   },
   logoText: {
-    fontSize: 32,
+    fontSize: 28,
+    fontWeight: 'bold',
     color: '#fbbf24'
   },
   appName: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 4
   },
   tagline: {
-    fontSize: 12,
-    marginBottom: 4
+    fontSize: 14,
+    marginBottom: 4,
+    textAlign: 'center'
   },
   themeIndicator: {
     flexDirection: 'row',
@@ -269,16 +315,22 @@ const styles = StyleSheet.create({
     width: '100%',
     alignSelf: 'center',
     maxWidth: 350,
-    paddingHorizontal: 10,
+    paddingHorizontal: Platform.OS === 'android' ? 5 : 10,
+    marginTop: windowHeight < 600 ? 10 : 20
+  },
+  inputField: {
+    height: 45,
+    marginBottom: 12
   },
   button: {
-    marginTop: 8,
-    height: 40,
+    marginTop: 12,
+    height: 45,
     borderRadius: 10
   },
   switchModeButton: {
-    marginTop: 10,
-    alignItems: 'center'
+    marginTop: 16,
+    alignItems: 'center',
+    paddingVertical: 8
   },
   switchModeText: {
     fontSize: 14
@@ -286,15 +338,14 @@ const styles = StyleSheet.create({
   demoText: {
     fontSize: 12,
     textAlign: 'center',
-    marginTop: 10
+    marginTop: 12,
+    paddingBottom: Platform.OS === 'android' ? 20 : 10
   },
   errorText: {
     color: '#ef4444',
     marginTop: 8,
-    textAlign: 'center'
-  },
-  inputField: {
-    height: 40,
-    marginBottom: 6
+    marginBottom: 8,
+    textAlign: 'center',
+    fontSize: 14
   }
 });
