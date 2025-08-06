@@ -32,7 +32,7 @@ const RootLayoutNav = React.memo(() => {
     <Stack 
       screenOptions={{ 
         headerBackTitle: "Back",
-        animation: 'slide_from_right' // Add smooth animation
+        animation: 'slide_from_right'
       }}
     >
       <Stack.Screen 
@@ -49,14 +49,6 @@ const RootLayoutNav = React.memo(() => {
           animation: 'slide_from_bottom'
         }} 
       />
-      {/* Add index route to prevent navigation errors */}
-      <Stack.Screen 
-        name="index" 
-        options={{ 
-          headerShown: false,
-          // Redirect to auth or tabs based on auth state
-        }} 
-      />
     </Stack>
   );
 });
@@ -65,8 +57,7 @@ const RootLayoutNav = React.memo(() => {
 RootLayoutNav.displayName = 'RootLayoutNav';
 
 export default function RootLayout() {
-  const [isReady, setIsReady] = useState(false);
-  const [showGreeting, setShowGreeting] = useState(true);
+  const [appIsReady, setAppIsReady] = useState(false);
 
   // Memoize the hide splash function
   const hideSplash = useCallback(async () => {
@@ -78,49 +69,32 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
-    let mounted = true;
-    let timer: NodeJS.Timeout;
-
-    const initialize = async () => {
-      // Hide splash screen
-      await hideSplash();
-      
-      // Show greeting for 2 seconds
-      timer = setTimeout(() => {
-        if (mounted) {
-          setShowGreeting(false);
-          setIsReady(true);
-        }
-      }, 2000);
-    };
-
-    initialize();
-
-    // Cleanup function
-    return () => {
-      mounted = false;
-      if (timer) {
-        clearTimeout(timer);
+    async function prepare() {
+      try {
+        // Add any initialization logic here if needed
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        // Tell the application to render
+        setAppIsReady(true);
+        await hideSplash();
       }
-    };
+    }
+
+    prepare();
   }, [hideSplash]);
 
-  // Show greeting screen
-  if (showGreeting) {
+  if (!appIsReady) {
     return (
       <SafeAreaProvider>
         <View style={styles.greetingContainer}>
           <Text style={styles.greetingText}>
-            Welcome to Your{'\n'}Life Coach Wellness App
+            Welcome to Your{'
+'}Life Coach Wellness App
           </Text>
         </View>
       </SafeAreaProvider>
     );
-  }
-
-  // Wait until ready to prevent flashing
-  if (!isReady) {
-    return null;
   }
 
   return (
